@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mylar crease test</title>
+</head>
+<body>
+    <h1>Mylar crease test</h1>
+    
+    <form id="svgForm">
+        <label for="size">Size:</label>
+        <input type="number" id="size" name="size" placeholder="Enter size" />
+        <br><br>
+    </form>
+
+    <h2><a href="/mylar/crease-test/preview">Preview</a></h2>
+
+    <iframe id="svgPreview" width="300" height="300" style="border:none;"></iframe>
+
+    <br><br>
+    <form action="/mylar/crease-test/download" method="POST" id="downloadForm">
+        <input type="hidden" id="sizeInput" name="size" />
+        <button type="submit">Download</button>
+    </form>
+
+    <script>
+     // Function to generate the SVG preview
+     function generateSvg() {
+         const color = document.getElementById('color').value;
+         const size = document.getElementById('size').value;
+         
+         // Send POST request to the server to get the SVG
+         fetch('/mylar/crease-test/preview', {
+             method: 'POST',
+             headers: {
+                 'Content-Type': 'application/x-www-form-urlencoded',
+             },
+             body: `color=${color}&size=${size}`,
+         })
+             .then(response => response.text())
+             .then(svg => {
+                 // Display the SVG in the iframe
+                 document.getElementById('svgPreview').src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+
+                 // Set hidden form values for downloading
+                 document.getElementById('colorInput').value = color;
+                 document.getElementById('sizeInput').value = size;
+             });
+     }
+
+     // Event listeners to trigger the preview update on input changes
+     document.getElementById('color').addEventListener('input', generateSvg);
+     document.getElementById('size').addEventListener('input', generateSvg);
+
+     // Call once on page load to show the default preview
+     generateSvg();
+    </script>
+    
+</body>
+</html>
